@@ -7,10 +7,7 @@ environment {
     IMAGE_NAME = 'banking-customer-portal'
     IMAGE_TAG = "${BUILD_NUMBER}"
 
-    // Replace with your actual Resource Group
     AZURE_RESOURCE_GROUP = 'YOUR_RESOURCE_GROUP'
-
-    // From your screenshot
     AZURE_APP_SERVICE = 'bankingportal-prod'
 
     DOCKER_IMAGE = "${DOCKER_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}"
