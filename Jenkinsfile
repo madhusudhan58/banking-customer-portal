@@ -1,7 +1,6 @@
 pipeline {
 agent any
 
-```
 environment {
     DOCKER_USERNAME = 'madhu58'
     IMAGE_NAME = 'banking-customer-portal'
@@ -134,6 +133,5 @@ post {
         echo 'Pipeline failed!'
     }
 }
-```
 
 }
