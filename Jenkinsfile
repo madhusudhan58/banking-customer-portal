@@ -1,31 +1,53 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = "madhu58/banking-customer-portal"
+        IMAGE_TAG = "${BUILD_NUMBER}"
+    }
+
     stages {
 
-        stage('Pull Code') {
+        stage('Checkout') {
             steps {
-                git 'https://github.com/madhusudhan58/banking-customer-portal.git'
+                git branch: 'main',
+                    credentialsId: 'github-creds',
+                    url: 'https://github.com/madhusudhan58/banking-customer-portal.git'
             }
         }
 
-        stage('Build') {
+        stage('Install Dependencies') {
             steps {
                 bat 'npm install'
             }
         }
 
-        stage('Docker Build') {
+        stage('Build Docker Image') {
             steps {
-                bat 'docker build -t bankingapp .'
+                bat 'docker build -t %IMAGE_NAME%:%IMAGE_TAG% .'
             }
         }
 
-        stage('Docker Push') {
+        stage('Docker Login') {
             steps {
-                bat 'docker push madhu58/bankingapp:v1'
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-creds',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )
+                ]) {
+                    bat '''
+                    echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin
+                    '''
+                }
             }
         }
 
+        stage('Push Docker Image') {
+            steps {
+                bat 'docker push %IMAGE_NAME%:%IMAGE_TAG%'
+            }
+        }
     }
 }
