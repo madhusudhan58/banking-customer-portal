@@ -16,9 +16,24 @@ pipeline {
             }
         }
 
+        stage('Check Node') {
+            steps {
+                bat 'where node'
+                bat 'node -v'
+                bat 'where npm'
+                bat 'npm -v'
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
                 bat 'npm install'
+            }
+        }
+
+        stage('Check Docker') {
+            steps {
+                bat 'docker --version'
             }
         }
 
@@ -48,6 +63,16 @@ pipeline {
             steps {
                 bat 'docker push %IMAGE_NAME%:%IMAGE_TAG%'
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+
+        failure {
+            echo 'Pipeline failed!'
         }
     }
 }
