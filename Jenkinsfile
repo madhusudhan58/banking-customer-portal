@@ -7,8 +7,11 @@ environment {
     IMAGE_NAME = 'banking-customer-portal'
     IMAGE_TAG = "${BUILD_NUMBER}"
 
-    AZURE_RESOURCE_GROUP = 'your-resource-group'
-    AZURE_APP_SERVICE = 'your-app-service'
+    // Replace with your actual Resource Group
+    AZURE_RESOURCE_GROUP = 'YOUR_RESOURCE_GROUP'
+
+    // From your screenshot
+    AZURE_APP_SERVICE = 'bankingportal-prod'
 
     DOCKER_IMAGE = "${DOCKER_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}"
 }
@@ -50,7 +53,7 @@ stages {
 
     stage('Build Docker Image') {
         steps {
-            bat "docker build -t %DOCKER_USERNAME%/%IMAGE_NAME%:%BUILD_NUMBER% ."
+            bat "docker build -t ${DOCKER_USERNAME}/${IMAGE_NAME}:${BUILD_NUMBER} ."
         }
     }
 
@@ -70,7 +73,7 @@ stages {
 
     stage('Push Docker Image') {
         steps {
-            bat "docker push %DOCKER_USERNAME%/%IMAGE_NAME%:%BUILD_NUMBER%"
+            bat "docker push ${DOCKER_USERNAME}/${IMAGE_NAME}:${BUILD_NUMBER}"
         }
     }
 
@@ -87,7 +90,7 @@ stages {
                 az login --service-principal ^
                 -u %AZURE_CLIENT_ID% ^
                 -p %AZURE_CLIENT_SECRET% ^
-                --tenant YOUR_TENANT_ID
+                --tenant da18867a-0fca-4bdf-ab69-a96e3a9254f1
                 """
             }
         }
@@ -99,7 +102,7 @@ stages {
             az webapp config container set ^
             --resource-group %AZURE_RESOURCE_GROUP% ^
             --name %AZURE_APP_SERVICE% ^
-            --container-image-name %DOCKER_USERNAME%/%IMAGE_NAME%:%BUILD_NUMBER%
+            --container-image-name ${DOCKER_USERNAME}/${IMAGE_NAME}:${BUILD_NUMBER}
             """
         }
     }
